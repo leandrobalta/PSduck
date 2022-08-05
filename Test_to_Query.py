@@ -1,5 +1,5 @@
 from re import T
-from psutil import sensors_battery, swap_memory, cpu_count, cpu_stats, cpu_percent, cpu_freq, disk_io_counters, disk_partitions, disk_usage, sensors_temperatures
+from psutil import sensors_battery, swap_memory, cpu_count, cpu_stats, cpu_percent, cpu_freq, disk_io_counters, disk_partitions, disk_usage, sensors_temperatures, process_iter, users
 
 
 # print(swap_memory())
@@ -50,3 +50,18 @@ print()
 
 battery_percent = sensors_battery()
 print(battery_percent.percent)
+
+
+print()
+print()
+print()
+
+print(process_iter())
+
+print()
+print()
+print()
+
+name = users()[0]
+
+print(name.name)

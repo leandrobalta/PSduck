@@ -7,7 +7,8 @@ from psutil import (
     swap_memory,
     sensors_temperatures,
     sensors_battery,
-    disk_usage
+    disk_usage,
+    users
 )
 from dashing import HSplit, VSplit, VGauge, HGauge, Text
 from time import sleep
@@ -39,10 +40,21 @@ user_interface = HSplit(  # user_interface have items
             border_color=1,
         ),
         VSplit(  # OTHERS --> user_interface.items[2].items[1]
-            HGauge(title="BATTERY"),
+            Text(  # user_interface.items[2].items[1].items[0]
+                ' ',
+
+
+            ),
+            Text(  # user_interface.items[2].items[1].items[1]
+                ' ',
+
+            ),
             title="OTHERS",
-            border_color=3
+            border_color=3,
+
         ),
+
+
     )
 )
 
@@ -78,6 +90,10 @@ while True:
     cpu_cores_ui = cpu_ui.items[1:5]
     all_cores_percent = cpu_percent(percpu=True)
 
+    for i, (core, value) in enumerate(zip(cpu_cores_ui, all_cores_percent)):
+        core.value = value
+        core.title = f" CPU_{i + 1} {value}%"
+
     # cpu temperature
     cpu_temp_ui = cpu_ui.items[5]
     temp = sensors_temperatures()['coretemp'][0]
@@ -95,15 +111,19 @@ while True:
 
     # --------------------------------------------------
 
-    # BATTERY
-    battery_ui = user_interface.items[2].items[1]
+    # OTHERS
+
+    # battery
+    battery_ui = user_interface.items[2].items[1].items[0]
     battery = sensors_battery()
     battery_ui.value = battery.percent
-    battery_ui.title = f" BATTERY {battery_ui.value}%"
+    battery_ui.text = f" BATTERY {battery_ui.value:.2f}%"
 
-    for i, (core, value) in enumerate(zip(cpu_cores_ui, all_cores_percent)):
-        core.value = value
-        core.title = f" CPU_{i + 1} {value}%"
+    # user
+    user_ui = user_interface.items[2].items[1].items[1]
+    user_ui = users()[0]
+    user_ui.value = user_ui
+    user_ui.text = f'{user_ui.name}'
 
     try:
         user_interface.display()
